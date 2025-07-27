@@ -1,6 +1,7 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using System;
+using System.Security.Policy;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,7 +13,7 @@ namespace Calinka
         public MainWindow()
         {
             InitializeComponent();
-            AddTab("https://www.bing.com");
+            AddTab("http://[21e:a51c:885b:7db0:166e:927:98cd:d186]");
         }
 
         private void AddTab(string url = "https://www.bing.com")
@@ -43,15 +44,24 @@ namespace Calinka
             webView.CoreWebView2InitializationCompleted += (sender, e) =>
             {
                 if (e.IsSuccess)
+                {
+                    webView.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
                     webView.CoreWebView2.Navigate(url);
+                }
                 else
                     MessageBox.Show("WebView2 initialization failed.");
             };
-            webView.Source = new Uri("about:blank");
+            webView.Source = new Uri(url);
             tabItem.Content = webView;
 
             Tabs.Items.Add(tabItem);
             Tabs.SelectedItem = tabItem;
+        }
+        private void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
+        {
+            e.Handled = true;
+            
+            AddTab(e.Uri);
         }
 
         private void CloseTab(TabItem tabItem)
