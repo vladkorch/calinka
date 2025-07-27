@@ -1,6 +1,7 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using System;
+using System.Diagnostics;
 using System.Security.Policy;
 using System.Windows;
 using System.Windows.Controls;
@@ -190,6 +191,28 @@ namespace Calinka
             {
                 AddressBar.Text = string.Empty;
             }
+        }
+        private void Open_OnClick(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.Show();
+            Application.Current.MainWindow.Activate();
+            string exePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "nircmd.exe");
+            string arguments = "win activate title \"Calinka\"";
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = exePath,
+                Arguments = arguments,
+                UseShellExecute = true
+            };
+            Process process = new Process { StartInfo = startInfo };
+            process.Start();
+        }
+        private void Hide_OnClick(object sender, RoutedEventArgs e)
+        {
+            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+            Thread.Sleep(1000);
+            Application.Current.MainWindow.Visibility = Visibility.Hidden;
         }
     }
 }

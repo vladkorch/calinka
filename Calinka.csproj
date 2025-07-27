@@ -9,7 +9,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="icon.ico" />
+    <None Remove="icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3351.48" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="icon.ico" />
+    <Resource Include="icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="assets\*.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
