@@ -161,7 +161,7 @@ namespace Calinka
 
             if (!url.Contains("://") && !url.StartsWith("about:"))
             {
-                url = "https://" + url;
+                url = "http://" + url;
             }
 
             try
