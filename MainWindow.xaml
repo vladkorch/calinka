@@ -2,42 +2,34 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
-        Title="Calinka Browser" Height="600" Width="1000">
+        Title="Calinka" Height="600" Width="1000">
     <DockPanel>
-        <!-- Sidebar -->
         <StackPanel DockPanel.Dock="Left" Width="150" Background="LightGray">
             <Button Content="Sidebar Action 1" />
             <Button Content="Sidebar Action 2" />
         </StackPanel>
-        <!-- Main Content -->
         <DockPanel>
-            <!-- Toolbar at the top -->
             <Grid DockPanel.Dock="Top">
-    <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="Auto"/>
-    </Grid.ColumnDefinitions>
-
-    <Button Grid.Column="0" Content="H" Click="Home_Click" Width="20"/>
-    <Button Grid.Column="1" Content="&lt;" Click="Back_Click" Width="20"/>
-    <Button Grid.Column="2" Content="@" Click="Reload_Click" Width="20"/>
-    <Button Grid.Column="3" Content="&gt;" Click="Forward_Click" Width="20"/>
-    <TextBox Grid.Column="4" Name="AddressBar" HorizontalAlignment="Stretch" KeyDown="AddressBar_KeyDown"/>
-    <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Right">
-        <Button Content="Go" Click="Go_Click" Width="20"/>
-        <Button Content="+" Click="AddTab_Click" Width="20"/>
-    </StackPanel>
-</Grid>
-
-            <TabControl Name="Tabs">
-                <TabItem Header="Welcome">
-                    <wv2:WebView2 x:Name="InitialWebView" />
-                </TabItem>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="H" Click="Home_Click" Width="20"/>
+                <Button Grid.Column="1" Content="&lt;" Click="Back_Click" Width="20"/>
+                <Button Grid.Column="2" Content="@" Click="Reload_Click" Width="20"/>
+                <Button Grid.Column="3" Content="&gt;" Click="Forward_Click" Width="20"/>
+                <TextBox Grid.Column="4" Name="AddressBar" HorizontalAlignment="Stretch" KeyDown="AddressBar_KeyDown"/>
+                <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Go" Click="Go_Click" Width="20"/>
+                    <Button Content="+" Click="AddTab_Click" Width="20"/>
+                </StackPanel>
+            </Grid>
+            <TabControl Name="Tabs" SelectionChanged="Tabs_SelectionChanged">
             </TabControl>
         </DockPanel>
     </DockPanel>

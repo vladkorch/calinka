@@ -19,9 +19,28 @@ namespace Calinka
         {
             var tabItem = new TabItem();
 
+            var headerPanel = new StackPanel { Orientation = Orientation.Horizontal };
+            var titleText = new TextBlock { Text = "New Tab", Margin = new Thickness(0, 0, 5, 0) };
+            var closeButton = new Button
+            {
+                Content = "x",
+                Width = 16,
+                Height = 16,
+                FontSize = 10,
+                FontWeight = FontWeights.Bold,
+                Padding = new Thickness(0),
+                BorderThickness = new Thickness(0),
+                Background = System.Windows.Media.Brushes.Transparent
+            };
+            closeButton.Click += (s, e) => CloseTab(tabItem);
+
+            headerPanel.Children.Add(titleText);
+            headerPanel.Children.Add(closeButton);
+            tabItem.Header = headerPanel;
+
             var webView = new WebView2();
             webView.NavigationCompleted += WebView_NavigationCompleted;
-            webView.CoreWebView2InitializationCompleted += async (sender, e) =>
+            webView.CoreWebView2InitializationCompleted += (sender, e) =>
             {
                 if (e.IsSuccess)
                     webView.CoreWebView2.Navigate(url);
@@ -29,14 +48,25 @@ namespace Calinka
                     MessageBox.Show("WebView2 initialization failed.");
             };
             webView.Source = new Uri("about:blank");
-            tabItem.Header = "New Tab";
             tabItem.Content = webView;
 
             Tabs.Items.Add(tabItem);
             Tabs.SelectedItem = tabItem;
         }
 
-        // Helper to get active WebView2 control
+        private void CloseTab(TabItem tabItem)
+        {
+            if (tabItem != null)
+            {
+                Tabs.Items.Remove(tabItem);
+
+                if (Tabs.Items.Count == 0)
+                {
+                    AddTab();
+                }
+            }
+        }
+
         private WebView2 GetActiveWebView()
         {
             if (Tabs.SelectedItem is TabItem selectedTab && selectedTab.Content is WebView2 webView)
@@ -46,42 +76,39 @@ namespace Calinka
             return null;
         }
 
-        // Update address bar when navigation completes
         private void WebView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
             var webView = sender as WebView2;
-            if (webView != null)
+            if (webView != null && webView.Parent is TabItem tabItem)
             {
-                if (webView.Parent is TabItem tabItem)
+                Dispatcher.Invoke(() =>
                 {
-                    // Update tab header and address bar if it's the active tab
-                    Dispatcher.Invoke(() =>
-                    {
-                        tabItem.Header = (webView.CoreWebView2?.DocumentTitle ?? webView.Source.ToString())
-                 .Substring(0, Math.Min(16, (webView.CoreWebView2?.DocumentTitle ?? webView.Source.ToString()).Length));
+                    string title = webView.CoreWebView2?.DocumentTitle ?? webView.Source.ToString();
+                    title = title.Substring(0, Math.Min(16, title.Length));
 
-                        if (Tabs.SelectedItem == tabItem)
-                        {
-                            AddressBar.Text = webView.Source.ToString();
-                        }
-                    });
-                }
+                    if (tabItem.Header is StackPanel header && header.Children.Count > 0 && header.Children[0] is TextBlock textBlock)
+                    {
+                        textBlock.Text = title;
+                    }
+
+                    if (Tabs.SelectedItem == tabItem)
+                    {
+                        AddressBar.Text = webView.Source.ToString();
+                    }
+                });
             }
         }
 
         private void Home_Click(object sender, RoutedEventArgs e)
         {
             var webView = GetActiveWebView();
-            if (webView != null)
-            {
-                webView.CoreWebView2?.Navigate("https://www.bing.com");
-            }
+            webView?.CoreWebView2?.Navigate("https://www.bing.com");
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             var webView = GetActiveWebView();
-            if (webView != null && webView.CoreWebView2 != null && webView.CoreWebView2.CanGoBack)
+            if (webView?.CoreWebView2?.CanGoBack == true)
             {
                 webView.CoreWebView2.GoBack();
             }
@@ -90,7 +117,7 @@ namespace Calinka
         private void Forward_Click(object sender, RoutedEventArgs e)
         {
             var webView = GetActiveWebView();
-            if (webView != null && webView.CoreWebView2 != null && webView.CoreWebView2.CanGoForward)
+            if (webView?.CoreWebView2?.CanGoForward == true)
             {
                 webView.CoreWebView2.GoForward();
             }
@@ -98,8 +125,7 @@ namespace Calinka
 
         private void Reload_Click(object sender, RoutedEventArgs e)
         {
-            var webView = GetActiveWebView();
-            webView?.CoreWebView2?.Reload();
+            GetActiveWebView()?.CoreWebView2?.Reload();
         }
 
         private void Go_Click(object sender, RoutedEventArgs e)
@@ -118,30 +144,23 @@ namespace Calinka
         private void NavigateToAddress()
         {
             var webView = GetActiveWebView();
-            var text = AddressBar.Text.Trim();
+            if (webView == null) return;
 
-            if (webView != null)
+            string url = AddressBar.Text.Trim();
+            if (string.IsNullOrWhiteSpace(url)) return;
+
+            if (!url.Contains("://") && !url.StartsWith("about:"))
             {
-                try
-                {
-                    Uri uri;
+                url = "https://" + url;
+            }
 
-                    // If no scheme, assume https
-                    if (!Uri.TryCreate(text, UriKind.Absolute, out uri))
-                    {
-                        uri = new Uri("https://" + text);
-                    }
-                    else if (string.IsNullOrEmpty(uri.Scheme))
-                    {
-                        uri = new Uri("https://" + text);
-                    }
-
-                    webView.CoreWebView2?.Navigate(uri.ToString());
-                }
-                catch (UriFormatException)
-                {
-                    MessageBox.Show("Invalid URL");
-                }
+            try
+            {
+                webView.CoreWebView2.Navigate(url);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Could not navigate to address: {ex.Message}");
             }
         }
 
@@ -153,9 +172,13 @@ namespace Calinka
         private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var webView = GetActiveWebView();
-            if (webView != null)
+            if (webView != null && webView.Source != null)
             {
                 AddressBar.Text = webView.Source.ToString();
+            }
+            else
+            {
+                AddressBar.Text = string.Empty;
             }
         }
     }
