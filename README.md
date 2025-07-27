@@ -4,7 +4,7 @@ Calinka - distributed link catalog / Калинка - распределенны
 
 ### Requirements
 
-x86_64; Windows 11; 2 Core; 4GB RAM; 128GB SSD; 10mbps WAN
+x86_64; Windows 11; 2 Core; 4GB RAM; 128GB SSD; 10mbps WAN; Open Ports TCP+UDP: 4001
 
 ### Installation
 
