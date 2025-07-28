@@ -214,5 +214,9 @@ namespace Calinka
             Thread.Sleep(1000);
             Application.Current.MainWindow.Visibility = Visibility.Hidden;
         }
+        private void SideBar_Action1(object sender, RoutedEventArgs e)
+        {
+            AddTab("http://127.0.0.1:8080/ipns/ru.wikipedia-on-ipfs.org");
+        }
     }
 }

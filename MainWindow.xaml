@@ -17,7 +17,7 @@
             <TextBox Name = "statusBar" Text="Calinka v.0.0.1" />
         </DockPanel>
         <StackPanel DockPanel.Dock="Left" Width="150" Background="LightGray">
-            <Button Content="Sidebar Action 1" />
+            <Button Content="RuWikiPadea(IPNS)" Click="SideBar_Action1"/>
             <Button Content="Sidebar Action 2" />
         </StackPanel>
         <DockPanel>
